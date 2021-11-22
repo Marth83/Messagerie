@@ -10,6 +10,7 @@ package Server;
 import java.io.*;
 import java.net.*;
 import java.util.Hashtable;
+import java.util.List;
 
 public class MessageServer {
 
@@ -62,7 +63,6 @@ public class MessageServer {
                 return false;
             }
         }
-
         //Target bien trouvée
         try {
             PrintStream out = new PrintStream(target.getOutputStream());
@@ -73,6 +73,11 @@ public class MessageServer {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public static List<String> getHistory(String sender, String receiver){
+
+        return db.getTchatHistory(sender, receiver);
     }
 }
 

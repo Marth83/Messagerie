@@ -55,28 +55,48 @@ public class MessageClient {
         sender=stdIn.readLine();
         socOut.println(sender);
         System.out.println("--- Bienvenue " + sender + "! ---");
+        boolean exit = false;
         do {
-            System.out.println("--- Qui voulez-vous contacter? ---");
-            receiver = stdIn.readLine();
-
-            //Début de la conv
-            String msg;
-            while (true){
-                msg = stdIn.readLine();
-                if (msg.equals(".")) {
-                    System.out.println("-- Fin de la conv --");
-                    break;
-                }
-                socOut.println(sender + "%" + receiver + "%" + msg);
-            }
-            System.out.println("--- Fin de la conversation ---");
-            System.out.println("--- Voulez-vous quitter? Entrer q pour quitter ---");
+            System.out.println("--- Menu ---");
+            System.out.println("- 1 -> Envoyer un msg privé");
+            System.out.println("- 2 -> Envoyer un msg groupé");
+            System.out.println("- q -> Quitter");
+            System.out.print("Faites votre choix : ");
             line = stdIn.readLine();
-        }while(!line.equals("q"));
+            switch (line){
+                case "1" :
+                    sendUnicast(sender, stdIn, socOut);
+                    break;
+                case "2" :
+                    //sendMulticast(send, stdIn, stdOut);
+                    break;
+                case "q" :
+                    exit = true;
+            }
+        }while(!exit);
         socOut.close();
         socIn.close();
         stdIn.close();
         echoSocket.close();
+    }
+
+    private static void sendUnicast(String sender, BufferedReader stdIn, PrintStream socOut) throws IOException {
+        System.out.println("--- Qui voulez-vous contacter? ---");
+        String receiver = stdIn.readLine();
+
+        System.out.println("--- Historique de votre conversation ---");
+
+        //Début de la conv
+        String msg;
+        while (true){
+            msg = stdIn.readLine();
+            if (msg.equals(".")) {
+                System.out.println("-- Fin de la conv --");
+                break;
+            }
+            socOut.println(sender + "%" + receiver + "%" + msg);
+        }
+        System.out.println("--- Fin de la conversation ---");
     }
 }
 

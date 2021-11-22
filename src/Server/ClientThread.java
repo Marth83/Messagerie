@@ -14,6 +14,8 @@ public class ClientThread
         extends Thread {
 
     private Socket clientSocket;
+    private String sender;
+    private String receiver;
 
     ClientThread(Socket s) {
         this.clientSocket = s;
@@ -21,7 +23,7 @@ public class ClientThread
 
     /**
      * receives a request from client then sends an echo to the client
-     * @param clientSocket the client socket
+     *
      **/
     public void run() {
         try {
@@ -31,11 +33,11 @@ public class ClientThread
             PrintStream socOut = new PrintStream(clientSocket.getOutputStream());
             //Averti l'utilisateur de sa connexion
             socOut.println("Vous êtes connectés au serveur!");
-            socOut.println("--- Veuillez-rentrer votre login ---");
+            socOut.println("--- Veuillez rentrer votre login ---");
 
             //Reçoit le login
-            String login = socIn.readLine();
-            MessageServer.sockets.put(login,clientSocket);
+            String sender = socIn.readLine();
+            MessageServer.sockets.put(sender,clientSocket);
 
             while (true) {
                 String line = socIn.readLine();
