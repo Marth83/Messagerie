@@ -4,7 +4,7 @@ et communiquer Client à Client en passant par le server.
 
 A faire (dans l'idéal)
 - Cryptage
-- Persistence historique -> sauvegarde OK
+- Persistence historique -> sauvegarde OK, restauration OK, Message en attente OK
 - Mdp des logins
 - Création de groupe (multicast)
 - Bloquer des utilisateurs

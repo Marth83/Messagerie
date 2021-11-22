@@ -8,7 +8,7 @@ package Client;
 
 import java.io.*;
 import java.net.*;
-
+import java.util.concurrent.TimeUnit;
 
 
 public class MessageClient {
@@ -65,7 +65,7 @@ public class MessageClient {
             line = stdIn.readLine();
             switch (line){
                 case "1" :
-                    sendUnicast(sender, stdIn, socOut);
+                    sendUnicast(sender, stdIn, socOut, socIn);
                     break;
                 case "2" :
                     //sendMulticast(send, stdIn, stdOut);
@@ -80,14 +80,13 @@ public class MessageClient {
         echoSocket.close();
     }
 
-    private static void sendUnicast(String sender, BufferedReader stdIn, PrintStream socOut) throws IOException {
+    private static void sendUnicast(String sender, BufferedReader stdIn, PrintStream socOut, BufferedReader socIn ) throws IOException {
         socOut.println("unicast");
         System.out.println("--- Qui voulez-vous contacter? ---");
         String receiver = stdIn.readLine();
         socOut.println(receiver);
 
         System.out.println("--- Historique de votre conversation ---");
-
         //Début de la conv
         String msg;
         while (true){

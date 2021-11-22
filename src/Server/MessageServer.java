@@ -56,7 +56,8 @@ public class MessageServer {
             target = sockets.get(sender);
             try {
                 PrintStream out = new PrintStream(target.getOutputStream());
-                out.println("Error : l'utilisateur n'est pas joignable");
+                out.println("(info) L'utilisateur n'est pas joignable -> Les messages seront transmis lors de sa future connexion");
+                db.addNewMessage(sender, receiver, message);
                 return true;
             }catch(Exception e){
                 e.printStackTrace();
@@ -79,8 +80,28 @@ public class MessageServer {
         Socket target = sockets.get(sender);
         PrintStream out = new PrintStream(target.getOutputStream());
         List<String> history = db.getTchatHistory(sender,receiver);
-        for (String var : history) {
-            out.println(var);
+        if(history.isEmpty()) {
+            out.println("Aucun historique à afficher");
+        }
+        else {
+            for (String var : history) {
+                out.println(var);
+            }
+        }
+    }
+
+    public static void getNewMsg(String sender, String receiver) throws IOException{
+        Socket target = sockets.get(sender);
+        PrintStream out = new PrintStream(target.getOutputStream());
+        List<String> newMsg = db.getNewMsg(sender,receiver);
+        if(newMsg.isEmpty()) {
+            out.println("Aucun nouveau message\n");
+        }
+        else {
+            out.print("--- Nouveau.x Message.s ---\n");
+            for (String var : newMsg) {
+                out.println(var);
+            }
         }
     }
 }

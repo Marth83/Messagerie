@@ -58,7 +58,9 @@ public class ClientThread
 
     public void unicast(BufferedReader socIn) throws IOException {
         System.out.println(sender + " passe en mode unicast");
-        MessageServer.getHistory(sender, socIn.readLine());
+        String receiver = socIn.readLine();
+        MessageServer.getHistory(sender, receiver);
+        MessageServer.getNewMsg(sender, receiver);
         while (true) {
             String line = socIn.readLine();
             System.out.println("Reçu :  " + line);
