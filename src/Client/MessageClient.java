@@ -84,6 +84,7 @@ public class MessageClient {
         socOut.println("unicast");
         System.out.println("--- Qui voulez-vous contacter? ---");
         String receiver = stdIn.readLine();
+        socOut.println(receiver);
 
         System.out.println("--- Historique de votre conversation ---");
 

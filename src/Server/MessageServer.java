@@ -75,9 +75,13 @@ public class MessageServer {
         }
     }
 
-    public static List<String> getHistory(String sender, String receiver){
-
-        return db.getTchatHistory(sender, receiver);
+    public static void getHistory(String sender, String receiver) throws IOException {
+        Socket target = sockets.get(sender);
+        PrintStream out = new PrintStream(target.getOutputStream());
+        List<String> history = db.getTchatHistory(sender,receiver);
+        for (String var : history) {
+            out.println(var);
+        }
     }
 }
 
