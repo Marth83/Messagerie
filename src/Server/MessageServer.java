@@ -21,6 +21,7 @@ public class MessageServer {
 
     //Map login <-> socket (Hashmap + rapide, mais supporte mal les Thread
     public static Hashtable<String,Socket> sockets = new Hashtable<String,Socket>();
+    public static Database db = new Database();
 
     public static void main(String args[]){
         ServerSocket listenSocket;
@@ -66,6 +67,7 @@ public class MessageServer {
         try {
             PrintStream out = new PrintStream(target.getOutputStream());
             out.println(sender + " says " + message);
+            db.addMessageToHistory(sender, receiver, message);
             return true;
         } catch (IOException e) {
             e.printStackTrace();
