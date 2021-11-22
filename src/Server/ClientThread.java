@@ -36,17 +36,33 @@ public class ClientThread
             socOut.println("--- Veuillez rentrer votre login ---");
 
             //Reçoit le login
-            String sender = socIn.readLine();
+            sender = socIn.readLine();
             MessageServer.sockets.put(sender,clientSocket);
-
-            while (true) {
+            boolean active = true;
+            while(active){
                 String line = socIn.readLine();
-                System.out.println("Reçu :  " + line);
-                String[] tab = line.split("%",3);
-                MessageServer.sendMessageTo(tab[0],tab[1],tab[2]);
+                switch(line){
+                    case "unicast" :
+                        unicast(socIn);
+                        break;
+                    case "quit" :
+                        active = false;
+                        break;
+                }
             }
+
         } catch (Exception e) {
             System.err.println("Error in EchoServer:" + e);
+        }
+    }
+
+    public void unicast(BufferedReader socIn) throws IOException {
+        System.out.println(sender + " passe en mode unicast");
+        while (true) {
+            String line = socIn.readLine();
+            System.out.println("Reçu :  " + line);
+            String[] tab = line.split("%",3);
+            MessageServer.sendMessageTo(tab[0],tab[1],tab[2]);
         }
     }
 

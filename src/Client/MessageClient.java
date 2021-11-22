@@ -81,6 +81,7 @@ public class MessageClient {
     }
 
     private static void sendUnicast(String sender, BufferedReader stdIn, PrintStream socOut) throws IOException {
+        socOut.println("unicast");
         System.out.println("--- Qui voulez-vous contacter? ---");
         String receiver = stdIn.readLine();
 
