@@ -103,6 +103,10 @@ public class MessageClient {
         System.out.println("--- Quel groupe voulez-vous joindre? ---");
         String group = stdIn.readLine();
         socOut.println(group);
+        //Tester l'existence du groupe, le créer sinon avec confirmation
+        //Creer la commande dans le ClientThread (switch case)
+        //Persister les msg, rendre le serveur compatible
+
     }
 }
 

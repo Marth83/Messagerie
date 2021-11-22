@@ -69,6 +69,11 @@ public class ClientThread
         }
     }
 
+    public void multicast(BufferedReader socIn) throws IOException {
+        System.out.println(sender + " passe en mode multicast");
+        String group = socIn.readLine();
+    }
+
 }
 
 

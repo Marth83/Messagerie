@@ -39,14 +39,13 @@ public class MessageServer {
                 System.out.println("Connexion from:" + clientSocket.getInetAddress());
                 ClientThread ct = new ClientThread(clientSocket);
                 ct.start();
-                FileWriter myWriter = new FileWriter("filename.txt");
-                myWriter.write("Files in Java might be tricky, but it is fun enough!");
-                myWriter.close();
             }
         } catch (Exception e) {
             System.err.println("Error in EchoServer:" + e);
         }
     }
+
+
 
     public static boolean sendMessageTo(String sender, String receiver, String message){
         Socket target = sockets.get(receiver);
