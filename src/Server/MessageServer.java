@@ -80,6 +80,7 @@ public class MessageServer {
         Socket target = sockets.get(sender);
         PrintStream out = new PrintStream(target.getOutputStream());
         List<String> history = db.getTchatHistory(sender,receiver);
+        out.print("--- Historique de votre conversation ---\n");
         if(history.isEmpty()) {
             out.println("Aucun historique à afficher");
         }
@@ -94,11 +95,11 @@ public class MessageServer {
         Socket target = sockets.get(sender);
         PrintStream out = new PrintStream(target.getOutputStream());
         List<String> newMsg = db.getNewMsg(sender,receiver);
+        out.print("--- Nouveau.x Message.s ---\n");
         if(newMsg.isEmpty()) {
             out.println("Aucun nouveau message\n");
         }
         else {
-            out.print("--- Nouveau.x Message.s ---\n");
             for (String var : newMsg) {
                 out.println(var);
             }

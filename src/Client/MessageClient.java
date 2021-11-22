@@ -85,8 +85,6 @@ public class MessageClient {
         System.out.println("--- Qui voulez-vous contacter? ---");
         String receiver = stdIn.readLine();
         socOut.println(receiver);
-
-        System.out.println("--- Historique de votre conversation ---");
         //Début de la conv
         String msg;
         while (true){
@@ -98,6 +96,13 @@ public class MessageClient {
             socOut.println(sender + "%" + receiver + "%" + msg);
         }
         System.out.println("--- Fin de la conversation ---");
+    }
+
+    private static void sendMulticast(String sender, BufferedReader stdIn, PrintStream socOut, BufferedReader socIn ) throws IOException {
+        socOut.println("multicast");
+        System.out.println("--- Quel groupe voulez-vous joindre? ---");
+        String group = stdIn.readLine();
+        socOut.println(group);
     }
 }
 
