@@ -57,7 +57,6 @@ public class MessageClient {
         System.out.println("--- Bienvenue " + sender + "! ---");
         do {
             System.out.println("--- Qui voulez-vous contacter? ---");
-            // Tester l'existence?
             receiver = stdIn.readLine();
 
             //Début de la conv
