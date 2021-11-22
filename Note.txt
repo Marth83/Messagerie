@@ -1,0 +1,12 @@
+La base est implémentée
+On peut s'identifier avec un login,
+et communiquer Client à Client en passant par le server.
+
+A faire (dans l'idéal)
+- Cryptage
+- Persistence
+- Mdp des logins
+- Création de groupe (multicast)
+- Bloquer des utilisateurs
+- IHM
+- Broadcast
