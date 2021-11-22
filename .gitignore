@@ -5,3 +5,4 @@
 *.xml
 out
 .idea
+.idea/vcs.xml
