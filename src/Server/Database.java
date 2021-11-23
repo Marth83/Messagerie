@@ -106,6 +106,35 @@ public class Database {
         return true;
     }
 
+    public boolean addGrpMessageToHistory(String groupName, String receiver, String txt){
+        String filePath = "database/group/history/" + groupName + "%" + receiver;
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true));
+            writer.append(txt + "\n");
+            writer.close();
+
+        }catch (Exception e){
+            System.out.println("Erreur dans la persistance");
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public boolean addGrpNewMessage(String sender, String receiver, String groupName, String msg){
+        String filePath = "database/group/newMsg/" + groupName + "%" + receiver;
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true));
+            writer.append("[" + groupName + "]" + sender + " - " + msg + "\n");
+            writer.close();
+        }catch (Exception e){
+            System.out.println("Erreur dans la persistance du nv msg");
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     public List<String> getGrpTchatHistory(String sender, String groupName){
         List<String> history = new ArrayList();
         String filePath = "database/group/history/" + groupName + "%" + sender;

@@ -15,15 +15,16 @@ public class MessageServer {
 
     /**
      * main method
+     *
      * @param MessageServer port
      **/
 
     //Map login <-> socket (Hashmap + rapide, mais supporte mal les Thread
-    public static Hashtable<String,Socket> sockets = new Hashtable<String,Socket>();
-    public static Hashtable<String,List<String>> groups = new Hashtable<String,List<String>>(); //Nom du groupe / Liste de paxs
+    public static Hashtable<String, Socket> sockets = new Hashtable<String, Socket>();
+    public static Hashtable<String, List<String>> groups = new Hashtable<String, List<String>>(); //Nom du groupe / Liste de paxs
     public static Database db = new Database();
 
-    public static void main(String args[]){
+    public static void main(String args[]) {
         ServerSocket listenSocket;
 
         if (args.length != 1) {
@@ -46,19 +47,18 @@ public class MessageServer {
     }
 
 
-
-    public static boolean sendMessageTo(String sender, String receiver, String message){
+    public static boolean sendMessageTo(String sender, String receiver, String message) {
         Socket target = sockets.get(receiver);
 
         //Si la target n'est pas joignable...
-        if(target == null || !target.isConnected()){
+        if (target == null || !target.isConnected()) {
             target = sockets.get(sender);
             try {
                 PrintStream out = new PrintStream(target.getOutputStream());
                 out.println("(info) L'utilisateur n'est pas joignable -> Les messages seront transmis lors de sa future connexion");
                 db.addNewMessage(sender, receiver, message);
                 return true;
-            }catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
                 return false;
             }
@@ -75,21 +75,20 @@ public class MessageServer {
         }
     }
 
-    public static boolean sendMessageToGroup(String sender, String groupName, String message){
+    public static boolean sendMessageToGroup(String sender, String groupName, String message) {
         List<String> listPax = getGroup(groupName); //Liste des destinataires
         List<Socket> sockPax = new ArrayList<>(); //Liste des sockets à remplir
-        for(String paxName : listPax){
+        for (String paxName : listPax) {
             sockPax.add(sockets.get(paxName));
         }
         sockPax.remove(sockets.get(sender));
-        int i = 0; //Indice pour recuperer le nom
+        int i = 1; //Indice pour recuperer le nom
         db.addGrpMessageToHistory(sender, sender, groupName, message); //Ajout à son historique
-        for(Socket pax : sockPax){
-            if(pax == null || !pax.isConnected()){
-                    //Traitement persistence offline db
-                    //OU un historique par personne? + simple
-                    //else, on skip
-            }else{
+        for (Socket pax : sockPax) {
+            if (pax == null || !pax.isConnected()) {
+                String receiver = listPax.get(i);
+                db.addGrpNewMessage(sender, receiver, groupName, message);
+            } else {
                 try {
                     PrintStream out = new PrintStream(pax.getOutputStream());
                     out.println("[" + groupName + "] " + sender + " - " + message);
@@ -101,83 +100,82 @@ public class MessageServer {
                     return false;
                 }
             }
+            i++;
         }
         return true;
     }
+
     public static void getHistory(String sender, String receiver) throws IOException {
         Socket target = sockets.get(sender);
         PrintStream out = new PrintStream(target.getOutputStream());
-        List<String> history = db.getTchatHistory(sender,receiver);
+        List<String> history = db.getTchatHistory(sender, receiver);
         out.print("--- Historique de votre conversation ---\n");
-        if(history.isEmpty()) {
+        if (history.isEmpty()) {
             out.println("Aucun historique à afficher");
-        }
-        else {
+        } else {
             for (String var : history) {
                 out.println(var);
             }
         }
     }
 
-    public static void getNewMsg(String sender, String receiver) throws IOException{
+    public static void getNewMsg(String sender, String receiver) throws IOException {
         Socket target = sockets.get(sender);
         PrintStream out = new PrintStream(target.getOutputStream());
-        List<String> newMsg = db.getNewMsg(sender,receiver);
+        List<String> newMsg = db.getNewMsg(sender, receiver);
         out.print("--- Nouveau.x Message.s ---\n");
-        if(newMsg.isEmpty()) {
+        if (newMsg.isEmpty()) {
             out.println("Aucun nouveau message\n");
-        }
-        else {
+        } else {
             for (String var : newMsg) {
                 out.println(var);
             }
         }
     }
 
-    public static void getGroupHistory(String sender, String groupName) throws IOException{
+    public static void getGroupHistory(String sender, String groupName) throws IOException {
         Socket target = sockets.get(sender);
         PrintStream out = new PrintStream(target.getOutputStream());
-        List<String> history = db.getGrpTchatHistory(sender,groupName);
+        List<String> history = db.getGrpTchatHistory(sender, groupName);
         out.print("--- Historique de votre conversation ---\n");
-        if(history.isEmpty()) {
+        if (history.isEmpty()) {
             out.println("Aucun historique à afficher");
-        }
-        else {
+        } else {
             for (String var : history) {
                 out.println(var);
             }
         }
     }
 
-    public static void getGroupNewMessage(String sender, String groupName) throws IOException{
+    public static void getGroupNewMessage(String sender, String groupName) throws IOException {
         Socket target = sockets.get(sender);
         PrintStream out = new PrintStream(target.getOutputStream());
-        List<String> newMsg = db.getGrpNewMsg(sender,groupName);
+        List<String> newMsg = db.getGrpNewMsg(sender, groupName);
         out.print("--- Nouveau.x Message.s ---\n");
-        if(newMsg.isEmpty()) {
+        if (newMsg.isEmpty()) {
             out.println("Aucun nouveau message\n");
-        }
-        else {
+        } else {
             for (String var : newMsg) {
-                String[] msg = var.split("%");
-                out.println("[" + groupName + "] " + msg[0] + " - " + msg[1]);
+                db.addGrpMessageToHistory(groupName, sender, var);
+                out.println(var);
             }
         }
     }
-    public static void createGroup(List<String> newGroup){
+
+    public static void createGroup(List<String> newGroup) {
         db.addGroup(newGroup);
         groups = db.getListGroups();
     }
 
-    public static List<String> getGroup(String name){ //renvoie nom des membres
+    public static List<String> getGroup(String name) { //renvoie nom des membres
         return groups.get(name);
     }
 
-    public static String getNameOfSocket(Socket target){
+    public static String getNameOfSocket(Socket target) {
         if (sockets.containsValue(target)) {
             for (Map.Entry<String, Socket> entry : sockets.entrySet()) {
                 if (Objects.equals(entry.getValue(), target)) {
-                   return entry.getKey();
+                    return entry.getKey();
                 }
             }
         }
