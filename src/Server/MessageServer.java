@@ -9,6 +9,7 @@ package Server;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class MessageServer {
 
     //Map login <-> socket (Hashmap + rapide, mais supporte mal les Thread
     public static Hashtable<String,Socket> sockets = new Hashtable<String,Socket>();
+    public static Hashtable<String,List<String>> groups = new Hashtable<String,List<String>>(); //Nom du groupe / Liste de paxs
     public static Database db = new Database();
 
     public static void main(String args[]){
@@ -33,6 +35,7 @@ public class MessageServer {
         }
         try {
             listenSocket = new ServerSocket(Integer.parseInt(args[0])); //port
+            groups = db.getListGroups();
             System.out.println("Server ready...");
             while (true) {
                 Socket clientSocket = listenSocket.accept();
@@ -103,6 +106,14 @@ public class MessageServer {
                 out.println(var);
             }
         }
+    }
+
+    public static void createGroup(List<String> newGroup){
+        db.addGroup(newGroup);
+    }
+
+    public static List<String> getGroup(String name){
+        return groups.get(name);
     }
 }
 

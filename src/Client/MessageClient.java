@@ -60,6 +60,7 @@ public class MessageClient {
             System.out.println("--- Menu ---");
             System.out.println("- 1 -> Envoyer un msg privé");
             System.out.println("- 2 -> Envoyer un msg groupé");
+            System.out.println("- 3 -> Créer un groupe");
             System.out.println("- q -> Quitter");
             System.out.print("Faites votre choix : ");
             line = stdIn.readLine();
@@ -68,7 +69,10 @@ public class MessageClient {
                     sendUnicast(sender, stdIn, socOut, socIn);
                     break;
                 case "2" :
-                    //sendMulticast(send, stdIn, stdOut);
+                    sendMulticast(sender, stdIn, socOut);
+                    break;
+                case "3" :
+                    createMulticast(sender, stdIn, socOut);
                     break;
                 case "q" :
                     exit = true;
@@ -98,12 +102,32 @@ public class MessageClient {
         System.out.println("--- Fin de la conversation ---");
     }
 
-    private static void sendMulticast(String sender, BufferedReader stdIn, PrintStream socOut, BufferedReader socIn ) throws IOException {
+    private static void sendMulticast(String sender, BufferedReader stdIn, PrintStream socOut) throws IOException {
         socOut.println("multicast");
         System.out.println("--- Quel groupe voulez-vous joindre? ---");
         String group = stdIn.readLine();
         socOut.println(group);
         //Tester l'existence du groupe, le créer sinon avec confirmation
+        //Creer la commande dans le ClientThread (switch case)
+        //Persister les msg, rendre le serveur compatible
+
+    }
+
+    private static void createMulticast(String sender, BufferedReader stdIn, PrintStream socOut) throws IOException {
+        socOut.println("create");
+        System.out.println("--- Création d'un groupe ---");
+        System.out.println("--- Entrez le nom du groupe");
+        String group = stdIn.readLine();
+        socOut.println(group);
+        while(true) {
+            System.out.println("--- Entrez le nom du participant, ou '.' pour quitter");
+            String msg = stdIn.readLine();
+            socOut.println(msg);
+            if (msg.equals(".")) {
+                System.out.println("-- Fin de la création --");
+                break;
+            }
+        }
         //Creer la commande dans le ClientThread (switch case)
         //Persister les msg, rendre le serveur compatible
 

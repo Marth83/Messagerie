@@ -9,6 +9,8 @@ package Server;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientThread
         extends Thread {
@@ -45,6 +47,12 @@ public class ClientThread
                     case "unicast" :
                         unicast(socIn);
                         break;
+                    case "multicast" :
+                        multicast(socIn,socOut);
+                        break;
+                    case "create" :
+                        createGroup(socIn, socOut);
+                        break;
                     case "quit" :
                         active = false;
                         break;
@@ -69,9 +77,37 @@ public class ClientThread
         }
     }
 
-    public void multicast(BufferedReader socIn) throws IOException {
+    public void multicast(BufferedReader socIn, PrintStream socOut) throws IOException {
         System.out.println(sender + " passe en mode multicast");
-        String group = socIn.readLine();
+        //Teste existence du groupe
+        String groupName = socIn.readLine();
+        if (MessageServer.getGroup(groupName) == null) {
+            socOut.println("--- Ce groupe n'existe pas. Appuyez sur . pour quitter ---");
+        } else {
+
+        }
+    }
+
+    public static boolean createGroup(BufferedReader socIn, PrintStream socOut) throws IOException {
+        List<String> newGroup = new ArrayList<>();
+        boolean active = true;
+        String groupName = socIn.readLine();
+        do{
+            String tmp = socIn.readLine();
+            if(tmp.contentEquals(".")){
+                active = false;
+            }else{
+                newGroup.add(tmp);
+                socOut.println("* " + tmp + " a bien été ajouté.");
+            }
+        }while(active);
+        if(newGroup.size() <= 3){ //Si on a que 2 personnes + le nom du groupe...
+            socOut.println("--- Le groupe ne peut pas contenir moins de 3 personnes -> création annulée");
+            return false;
+        }else{
+            MessageServer.createGroup(newGroup);
+        }
+        return true;
     }
 
 }
