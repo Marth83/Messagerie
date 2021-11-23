@@ -51,7 +51,7 @@ public class ClientThread
                         multicast(socIn,socOut);
                         break;
                     case "create" :
-                        createGroup(socIn, socOut);
+                        createGroup(socIn, socOut, sender);
                         break;
                     case "quit" :
                         active = false;
@@ -88,10 +88,13 @@ public class ClientThread
         }
     }
 
-    public static boolean createGroup(BufferedReader socIn, PrintStream socOut) throws IOException {
+    public static boolean createGroup(BufferedReader socIn, PrintStream socOut, String sender) throws IOException {
         List<String> newGroup = new ArrayList<>();
         boolean active = true;
+        //Récupère le nom du groupe
         String groupName = socIn.readLine();
+        newGroup.add(groupName);
+        newGroup.add(sender);
         do{
             String tmp = socIn.readLine();
             if(tmp.contentEquals(".")){

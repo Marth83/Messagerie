@@ -99,6 +99,7 @@ public class Database {
             for (String var : newGroup) {
                 writer.append(var + "%");
             }
+            writer.append("\n");
             writer.close();
         }catch (Exception e){
             System.out.println("Erreur dans la persistance du nv msg");
