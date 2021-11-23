@@ -107,10 +107,16 @@ public class MessageClient {
         System.out.println("--- Quel groupe voulez-vous joindre? ---");
         String group = stdIn.readLine();
         socOut.println(group);
-        //Tester l'existence du groupe, le créer sinon avec confirmation
-        //Creer la commande dans le ClientThread (switch case)
-        //Persister les msg, rendre le serveur compatible
-
+        String msg;
+        while(true){
+            msg = stdIn.readLine();
+            socOut.println(msg);
+            if (msg.equals(".")) {
+                System.out.println("-- Fin de la conv --");
+                break;
+            }
+        }
+        System.out.println("--- Fin de la conversation ---");
     }
 
     private static void createMulticast(String sender, BufferedReader stdIn, PrintStream socOut) throws IOException {

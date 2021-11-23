@@ -73,6 +73,9 @@ public class ClientThread
             String line = socIn.readLine();
             System.out.println("Reçu :  " + line);
             String[] tab = line.split("%",3);
+            if (tab[2].equals(".")) {
+                return;
+            }
             MessageServer.sendMessageTo(tab[0],tab[1],tab[2]);
         }
     }
@@ -83,8 +86,30 @@ public class ClientThread
         String groupName = socIn.readLine();
         if (MessageServer.getGroup(groupName) == null) {
             socOut.println("--- Ce groupe n'existe pas. Appuyez sur . pour quitter ---");
-        } else {
-            //Traitement multicast
+            while(true){
+                if(socIn.readLine().equals(".")){
+                    return;
+                }
+                socOut.println("--- Aucun groupe selectionne. Appuyez sur . pour quitter ---");
+            }
+        } /*else if(MessageServer.getGroup(groupName).get(groupName) == null){ //Test si appartient bien au groupe
+            socOut.println("--- Vous n'avez pas accès à ce groupe. Appuyez sur . pour quitter ---");
+            while(true){
+                if(socIn.readLine().equals(".")){
+                    return;
+                }
+                socOut.println("--- Aucun groupe selectionne. Appuyez sur . pour quitter ---");
+            }
+        } */else{
+            while (true) {
+                String line = socIn.readLine();
+                System.out.println("[Multicast] Reçu :  " + line);
+                if (line.equals(".")) {
+                    return;
+                }
+                MessageServer.sendMessageToGroup(sender,groupName,line);
+            }
+
         }
     }
 
@@ -97,7 +122,7 @@ public class ClientThread
         newGroup.add(sender);
         do{
             String tmp = socIn.readLine();
-            if(tmp.contentEquals(".")){
+            if(tmp.equals(".")){
                 active = false;
             }else{
                 newGroup.add(tmp);

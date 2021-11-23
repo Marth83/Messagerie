@@ -68,7 +68,7 @@ public class MessageServer {
         //Target bien trouvée
         try {
             PrintStream out = new PrintStream(target.getOutputStream());
-            out.println(sender + " says " + message);
+            out.println(sender + " - " + message);
             db.addMessageToHistory(sender, receiver, message);
             return true;
         } catch (IOException e) {
@@ -77,6 +77,33 @@ public class MessageServer {
         }
     }
 
+    public static boolean sendMessageToGroup(String sender, String groupName, String message){
+        List<String> listPax = getGroup(groupName);
+        List<Socket> sockPax = new ArrayList<>();
+        for(String paxName : listPax){
+            sockPax.add(sockets.get(paxName));
+        }
+        boolean inHistory = false;
+        for(Socket pax : sockPax){
+            if((pax == null || !pax.isConnected())){
+                if(!inHistory) {
+                    inHistory = true;
+                    //Traitement persistence offline db
+                    //OU un historique par personne? + simple
+                } //else, on skip
+            }else{
+                try {
+                    PrintStream out = new PrintStream(pax.getOutputStream());
+                    out.println("[" + groupName + "] " + sender + " - " + message);
+                    //Traitement sauvegarde historique
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
     public static void getHistory(String sender, String receiver) throws IOException {
         Socket target = sockets.get(sender);
         PrintStream out = new PrintStream(target.getOutputStream());
@@ -109,9 +136,10 @@ public class MessageServer {
 
     public static void createGroup(List<String> newGroup){
         db.addGroup(newGroup);
+        groups = db.getListGroups();
     }
 
-    public static List<String> getGroup(String name){
+    public static List<String> getGroup(String name){ //renvoie nom des membres
         return groups.get(name);
     }
 }
