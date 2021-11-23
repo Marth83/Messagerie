@@ -84,7 +84,7 @@ public class ClientThread
         if (MessageServer.getGroup(groupName) == null) {
             socOut.println("--- Ce groupe n'existe pas. Appuyez sur . pour quitter ---");
         } else {
-
+            //Traitement multicast
         }
     }
 

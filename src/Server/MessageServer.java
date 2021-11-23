@@ -18,7 +18,6 @@ public class MessageServer {
     /**
      * main method
      * @param MessageServer port
-     *
      **/
 
     //Map login <-> socket (Hashmap + rapide, mais supporte mal les Thread
