@@ -5,8 +5,8 @@ et communiquer Client à Client en passant par le server.
 A faire (dans l'idéal)
 - Cryptage
 - Persistence historique -> sauvegarde OK, restauration OK, Message en attente OK
-- Mdp des logins
+- Mdp des logins -> OK
 - Création de groupe (multicast) -> Création groupe OK
 - Bloquer des utilisateurs
 - IHM -> Yasmine gère
-- Broadcast
+- Broadcast -> OK

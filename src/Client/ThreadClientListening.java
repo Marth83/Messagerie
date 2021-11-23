@@ -23,7 +23,7 @@ public class ThreadClientListening extends Thread {
         try {
             while (true) {
                 String msg = socIn.readLine();
-                if (msg==null) break;
+                if (msg.equals(".")) break;
                 System.out.println(msg);
             }
         } catch (Exception e) {

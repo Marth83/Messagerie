@@ -39,8 +39,6 @@ public class MessageClient {
                     new InputStreamReader(echoSocket.getInputStream())); //Ce qui vient du serveur
             socOut= new PrintStream(echoSocket.getOutputStream());
             stdIn = new BufferedReader(new InputStreamReader(System.in));
-            ThreadClientListening tcl = new ThreadClientListening(socIn);
-            tcl.start();
         } catch (UnknownHostException e) {
             System.err.println("Don't know about host:" + args[0]);
             System.exit(1);
@@ -49,18 +47,35 @@ public class MessageClient {
                     + "the connection to:"+ args[0]);
             System.exit(1);
         }
-
-        String line;
+        boolean connected = false;
+        String line = socIn.readLine();
         //Login
-        sender=stdIn.readLine();
-        socOut.println(sender);
-        System.out.println("--- Bienvenue " + sender + "! ---");
+        do {
+            while (!line.equals("waitForLogin")) {
+                System.out.println(line);
+                line = socIn.readLine();
+            }
+            sender = stdIn.readLine();
+            socOut.println(sender);
+            System.out.println(socIn.readLine());
+            socOut.println(stdIn.readLine());
+            line = socIn.readLine();
+            if(line.equals("connected"))
+                connected = true;
+            else
+                System.out.println(line);
+        }while(!connected);
+
+        ThreadClientListening tcl = new ThreadClientListening(socIn);
+        tcl.start();
         boolean exit = false;
+        System.out.println("--- Bienvenue " + sender + "! ---");
         do {
             System.out.println("--- Menu ---");
             System.out.println("- 1 -> Envoyer un msg privé");
             System.out.println("- 2 -> Envoyer un msg groupé");
             System.out.println("- 3 -> Créer un groupe");
+            System.out.println("- 4 -> Broadcast (admin)");
             System.out.println("- q -> Quitter");
             System.out.print("Faites votre choix : ");
             line = stdIn.readLine();
@@ -74,10 +89,18 @@ public class MessageClient {
                 case "3" :
                     createMulticast(sender, stdIn, socOut);
                     break;
+                case "4" :
+                    if(sender.equals("admin")){
+                        broadCast(stdIn, socOut);
+                    }else{
+                        System.out.println("--- Erreur : vous n'avez pas les droits admin ---");
+                    }
+                    break;
                 case "q" :
                     exit = true;
             }
         }while(!exit);
+        socOut.println("quit");
         socOut.close();
         socIn.close();
         stdIn.close();
@@ -134,9 +157,12 @@ public class MessageClient {
                 break;
             }
         }
-        //Creer la commande dans le ClientThread (switch case)
-        //Persister les msg, rendre le serveur compatible
-
+    }
+    private static void broadCast(BufferedReader stdIn, PrintStream socOut) throws IOException {
+        socOut.println("broadcast");
+        System.out.println("--- Entrez votre message admin");
+        String msg = stdIn.readLine();
+        socOut.println(msg);
     }
 }
 

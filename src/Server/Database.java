@@ -40,7 +40,7 @@ public class Database {
         String filePath = "database/toBeSend/" + sender + "%" + receiver;
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true));
-            writer.append(sender + " says " + receiver + " : " + msg + "\n");
+            writer.append(sender + " says " + " : " + msg + "\n");
             writer.close();
         }catch (Exception e){
             System.out.println("Erreur dans la persistance du nv msg");
@@ -188,6 +188,22 @@ public class Database {
             return false;
         }
         return true;
+    }
+
+    public Hashtable<String,String> loadUsers(){
+        String filePath = "database/login";
+        Hashtable<String,String > users = new Hashtable<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String [] temp = line.split("%");
+                users.put(temp[0],temp[1]);
+            }
+        } catch (IOException e) {
+            System.out.println("Erreur dans l'importation des users.");
+            e.printStackTrace();
+        }
+        return users;
     }
 
     private String getFileName(String type, String sender, String receiver){

@@ -10,6 +10,8 @@ package Server;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 
 public class ClientThread
@@ -34,11 +36,25 @@ public class ClientThread
                     new InputStreamReader(clientSocket.getInputStream()));
             PrintStream socOut = new PrintStream(clientSocket.getOutputStream());
             //Averti l'utilisateur de sa connexion
-            socOut.println("Vous êtes connectés au serveur!");
-            socOut.println("--- Veuillez rentrer votre login ---");
-
-            //Reçoit le login
-            sender = socIn.readLine();
+            boolean connected = false;
+            socOut.println("Vous êtes connectés au serveur, bienvenue!");
+            do {
+                socOut.println("--- Veuillez rentrer votre login ---");
+                socOut.println("waitForLogin");
+                //Reçoit le login
+                sender = socIn.readLine();
+                Hashtable<String, String> usersList = MessageServer.getUserList();
+                if (usersList.containsKey(sender)) {
+                    socOut.println("--- Veuillez rentrer votre mdp ---");
+                    String mdp = socIn.readLine();
+                    if (!usersList.get(sender).equals(mdp)) {
+                        socOut.println("--- Erreur : le mdp est erroné ---");
+                    }else{
+                        connected = true;
+                        socOut.println("connected");
+                    }
+                }
+            }while(!connected);
             MessageServer.sockets.put(sender,clientSocket);
             boolean active = true;
             while(active){
@@ -53,8 +69,12 @@ public class ClientThread
                     case "create" :
                         createGroup(socIn, socOut, sender);
                         break;
+                    case "broadcast" :
+                        broadcast(socIn,socOut, sender);
+                        break;
                     case "quit" :
                         active = false;
+                        socOut.println(".");
                         break;
                 }
             }
@@ -136,6 +156,18 @@ public class ClientThread
             return false;
         }else{
             MessageServer.createGroup(newGroup);
+        }
+        return true;
+    }
+
+    public static boolean broadcast(BufferedReader socIn, PrintStream socOut, String sender) throws IOException {
+        String msg = socIn.readLine();
+        if(sender.equals("admin")){
+            MessageServer.broadcastMsg(msg);
+            socOut.println("--- Message envoye");
+        }else{
+            socOut.println("--- Erreur -> vous n'etes pas admin");
+            return false;
         }
         return true;
     }
