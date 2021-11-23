@@ -6,7 +6,7 @@ A faire (dans l'idéal)
 - Cryptage
 - Persistence historique -> sauvegarde OK, restauration OK, Message en attente OK
 - Mdp des logins
-- Création de groupe (multicast)
+- Création de groupe (multicast) -> Création groupe OK
 - Bloquer des utilisateurs
-- IHM
+- IHM -> Yasmine gère
 - Broadcast
