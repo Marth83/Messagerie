@@ -92,7 +92,7 @@ public class ClientThread
                 }
                 socOut.println("--- Aucun groupe selectionne. Appuyez sur . pour quitter ---");
             }
-        } /*else if(MessageServer.getGroup(groupName).get(groupName) == null){ //Test si appartient bien au groupe
+        }else if(!MessageServer.getGroup(groupName).contains(sender)){ //Test si appartient bien au groupe
             socOut.println("--- Vous n'avez pas accès à ce groupe. Appuyez sur . pour quitter ---");
             while(true){
                 if(socIn.readLine().equals(".")){
@@ -100,7 +100,9 @@ public class ClientThread
                 }
                 socOut.println("--- Aucun groupe selectionne. Appuyez sur . pour quitter ---");
             }
-        } */else{
+        }else{
+            MessageServer.getGroupHistory(sender, groupName);
+            MessageServer.getGroupNewMessage(sender, groupName);
             while (true) {
                 String line = socIn.readLine();
                 System.out.println("[Multicast] Reçu :  " + line);

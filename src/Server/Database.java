@@ -91,6 +91,58 @@ public class Database {
         }
         return groups;
     }
+    public boolean addGrpMessageToHistory(String sender, String receiver, String groupName, String msg){
+        String filePath = "database/group/history/" + groupName + "%" + receiver;
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true));
+            writer.append("[" + groupName + "]" + sender + " - " + msg + "\n");
+            writer.close();
+
+        }catch (Exception e){
+            System.out.println("Erreur dans la persistance");
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public List<String> getGrpTchatHistory(String sender, String groupName){
+        List<String> history = new ArrayList();
+        String filePath = "database/group/history/" + groupName + "%" + sender;
+        File file = new File(filePath);
+        if(!file.exists()){
+            return new ArrayList<String>();
+        }
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null){
+                history.add(line);
+            }
+        } catch (IOException e) {
+            System.out.println("Erreur dans la lecture du fichier.");
+            e.printStackTrace();
+        }
+        return history;
+    }
+
+    public List<String> getGrpNewMsg(String sender, String groupName){
+        List<String> newMsg = new ArrayList();
+        String filePath = "database/group/newMsg/" + groupName + "%" + sender;
+        File file = new File(filePath);
+        if(file.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    newMsg.add(line);
+                }
+            } catch (IOException e) {
+                System.out.println("Erreur dans la lecture du fichier.");
+                e.printStackTrace();
+            }
+            file.delete();
+        }
+        return newMsg;
+    }
 
     public boolean addGroup(List<String> newGroup){
         String filePath = "database/group/groupList";
@@ -102,7 +154,7 @@ public class Database {
             writer.append("\n");
             writer.close();
         }catch (Exception e){
-            System.out.println("Erreur dans la persistance du nv msg");
+            System.out.println("Erreur dans la persistence du nv msg");
             e.printStackTrace();
             return false;
         }
