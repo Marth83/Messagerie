@@ -27,7 +27,7 @@ public class ClientThread
 
     /**
      * receives a request from client then sends an echo to the client
-     *
+     * @author Martin, Yasmine, Claire
      **/
     public void run() {
         try {

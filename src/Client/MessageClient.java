@@ -17,6 +17,7 @@ public class MessageClient {
     /**
      *  main method
      *  accepts a connection, receives a message from client then sends an echo to the client
+     *  @author Martin, Yasmine, Claire
      **/
     public static void main(String[] args) throws IOException {
 
