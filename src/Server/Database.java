@@ -10,7 +10,7 @@ public class Database {
         String filePath = getFileName("history",sender, receiver);
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true));
-            writer.append(sender + " says " + receiver + " : " + msg + "\n");
+            writer.append(sender + " - " + msg + "\n");
             writer.close();
 
         }catch (Exception e){
@@ -24,6 +24,9 @@ public class Database {
     public List<String> getTchatHistory(String sender, String receiver){
         List<String> history = new ArrayList();
         String filePath = getFileName("history",sender, receiver);
+        File file = new File(filePath);
+        if(!file.exists()) //Si aucun fichier, on a pas d'historique
+            return history;
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null){
@@ -40,7 +43,7 @@ public class Database {
         String filePath = "database/toBeSend/" + sender + "%" + receiver;
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true));
-            writer.append(sender + " says " + " : " + msg + "\n");
+            writer.append(sender + " - " + msg + "\n");
             writer.close();
         }catch (Exception e){
             System.out.println("Erreur dans la persistance du nv msg");

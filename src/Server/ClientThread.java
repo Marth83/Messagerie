@@ -91,12 +91,10 @@ public class ClientThread
         MessageServer.getNewMsg(sender, receiver);
         while (true) {
             String line = socIn.readLine();
-            System.out.println("Reçu :  " + line);
-            String[] tab = line.split("%",3);
-            if (tab[2].equals(".")) {
+            if (line.equals(".")) {
                 return;
             }
-            MessageServer.sendMessageTo(tab[0],tab[1],tab[2]);
+            MessageServer.sendMessageTo(sender,receiver,line);
         }
     }
 
@@ -125,7 +123,8 @@ public class ClientThread
             MessageServer.getGroupNewMessage(sender, groupName);
             while (true) {
                 String line = socIn.readLine();
-                System.out.println("[Multicast] Reçu :  " + line);
+                if(!line.equals("\n"))
+                    System.out.println("[Multicast] Reçu :  " + line);
                 if (line.equals(".")) {
                     return;
                 }
@@ -137,6 +136,7 @@ public class ClientThread
 
     public static boolean createGroup(BufferedReader socIn, PrintStream socOut, String sender) throws IOException {
         List<String> newGroup = new ArrayList<>();
+        Hashtable<String,String> listUsers =  MessageServer.getUserList();
         boolean active = true;
         //Récupère le nom du groupe
         String groupName = socIn.readLine();
@@ -147,8 +147,12 @@ public class ClientThread
             if(tmp.equals(".")){
                 active = false;
             }else{
-                newGroup.add(tmp);
-                socOut.println("* " + tmp + " a bien été ajouté.");
+                if(listUsers.containsKey(tmp)) {
+                    newGroup.add(tmp);
+                    socOut.println("* " + tmp + " a bien été ajouté.");
+                }else{
+                    socOut.println("--- Cet utilisateur n'existe pas!");
+                }
             }
         }while(active);
         if(newGroup.size() <= 3){ //Si on a que 2 personnes + le nom du groupe...

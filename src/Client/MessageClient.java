@@ -77,7 +77,7 @@ public class MessageClient {
             System.out.println("- 3 -> Créer un groupe");
             System.out.println("- 4 -> Broadcast (admin)");
             System.out.println("- q -> Quitter");
-            System.out.print("Faites votre choix : ");
+            System.out.println("Faites votre choix : ");
             line = stdIn.readLine();
             switch (line){
                 case "1" :
@@ -116,11 +116,12 @@ public class MessageClient {
         String msg;
         while (true){
             msg = stdIn.readLine();
+            if(!msg.equals("\n"))
+                socOut.println(msg);
             if (msg.equals(".")) {
                 System.out.println("-- Fin de la conv --");
                 break;
             }
-            socOut.println(sender + "%" + receiver + "%" + msg);
         }
         System.out.println("--- Fin de la conversation ---");
     }
@@ -133,7 +134,8 @@ public class MessageClient {
         String msg;
         while(true){
             msg = stdIn.readLine();
-            socOut.println(msg);
+            if(!msg.equals("\n"))
+                socOut.println(msg);
             if (msg.equals(".")) {
                 System.out.println("-- Fin de la conv --");
                 break;
@@ -151,7 +153,8 @@ public class MessageClient {
         while(true) {
             System.out.println("--- Entrez le nom du participant, ou '.' pour quitter");
             String msg = stdIn.readLine();
-            socOut.println(msg);
+            if(!msg.equals("\n"))
+                socOut.println(msg);
             if (msg.equals(".")) {
                 System.out.println("-- Fin de la création --");
                 break;
