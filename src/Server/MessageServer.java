@@ -14,7 +14,7 @@ import java.util.*;
 public class MessageServer {
 
     /**
-     * main method
+     * Main method
      *
      * @param MessageServer port
      * @author Martin, Yasmine, Claire
