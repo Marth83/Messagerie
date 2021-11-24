@@ -61,7 +61,7 @@ public class ClientThread
                 String line = socIn.readLine();
                 switch(line){
                     case "unicast" :
-                        unicast(socIn);
+                        unicast(socIn, socOut);
                         break;
                     case "multicast" :
                         multicast(socIn,socOut);
@@ -84,17 +84,22 @@ public class ClientThread
         }
     }
 
-    public void unicast(BufferedReader socIn) throws IOException {
+    public void unicast(BufferedReader socIn, PrintStream socOut) throws IOException {
         System.out.println(sender + " passe en mode unicast");
         String receiver = socIn.readLine();
-        MessageServer.getHistory(sender, receiver);
-        MessageServer.getNewMsg(sender, receiver);
-        while (true) {
-            String line = socIn.readLine();
-            if (line.equals(".")) {
-                return;
+        Hashtable<String,String> userList = MessageServer.getUserList();
+        if(userList.containsKey(receiver)) {
+            MessageServer.getHistory(sender, receiver);
+            MessageServer.getNewMsg(sender, receiver);
+            while (true) {
+                String line = socIn.readLine();
+                if (line.equals(".")) {
+                    return;
+                }
+                MessageServer.sendMessageTo(sender, receiver, line);
             }
-            MessageServer.sendMessageTo(sender,receiver,line);
+        }else{
+            socOut.println("--- Cet utilisateur n'existe pas. Quittez avec '.' ---");
         }
     }
 
