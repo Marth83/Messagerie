@@ -193,6 +193,7 @@ public class MessageServer {
     public static Hashtable<String,String> getUserList(){
         return users;
     }
+    public static Hashtable<String, List<String>> getGroups(){ return groups;}
 }
 
 

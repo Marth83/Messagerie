@@ -27,6 +27,7 @@ public class ClientThread
 
     /**
      * receives a request from client then sends an echo to the client
+     *
      * @author Martin, Yasmine, Claire
      **/
     public void run() {
@@ -50,32 +51,32 @@ public class ClientThread
                     String mdp = socIn.readLine();
                     if (!usersList.get(sender).equals(mdp)) {
                         socOut.println("--- Erreur : le mdp est erroné ---");
-                    }else{
+                    } else {
                         connected = true;
                         socOut.println("connected");
                     }
-                }else{
+                } else {
                     socOut.println("notFound");
                 }
-            }while(!connected);
-            MessageServer.sockets.put(sender,clientSocket);
+            } while (!connected);
+            MessageServer.sockets.put(sender, clientSocket);
             boolean active = true;
-            while(active){
+            while (active) {
                 String line = socIn.readLine();
-                switch(line){
-                    case "unicast" :
+                switch (line) {
+                    case "unicast":
                         unicast(socIn, socOut);
                         break;
-                    case "multicast" :
-                        multicast(socIn,socOut);
+                    case "multicast":
+                        multicast(socIn, socOut);
                         break;
-                    case "create" :
+                    case "create":
                         createGroup(socIn, socOut, sender);
                         break;
-                    case "broadcast" :
-                        broadcast(socIn,socOut, sender);
+                    case "broadcast":
+                        broadcast(socIn, socOut, sender);
                         break;
-                    case "quit" :
+                    case "quit":
                         active = false;
                         socOut.println(".");
                         break;
@@ -90,8 +91,8 @@ public class ClientThread
     public void unicast(BufferedReader socIn, PrintStream socOut) throws IOException {
         System.out.println(sender + " passe en mode unicast");
         String receiver = socIn.readLine();
-        Hashtable<String,String> userList = MessageServer.getUserList();
-        if(userList.containsKey(receiver)) {
+        Hashtable<String, String> userList = MessageServer.getUserList();
+        if (userList.containsKey(receiver)) {
             MessageServer.getHistory(sender, receiver);
             MessageServer.getNewMsg(sender, receiver);
             while (true) {
@@ -101,7 +102,7 @@ public class ClientThread
                 }
                 MessageServer.sendMessageTo(sender, receiver, line);
             }
-        }else{
+        } else {
             socOut.println("--- Cet utilisateur n'existe pas. Quittez avec '.' ---");
         }
     }
@@ -112,31 +113,31 @@ public class ClientThread
         String groupName = socIn.readLine();
         if (MessageServer.getGroup(groupName) == null) {
             socOut.println("--- Ce groupe n'existe pas. Appuyez sur . pour quitter ---");
-            while(true){
-                if(socIn.readLine().equals(".")){
+            while (true) {
+                if (socIn.readLine().equals(".")) {
                     return;
                 }
                 socOut.println("--- Aucun groupe selectionne. Appuyez sur . pour quitter ---");
             }
-        }else if(!MessageServer.getGroup(groupName).contains(sender)){ //Test si appartient bien au groupe
+        } else if (!MessageServer.getGroup(groupName).contains(sender)) { //Test si appartient bien au groupe
             socOut.println("--- Vous n'avez pas accès à ce groupe. Appuyez sur . pour quitter ---");
-            while(true){
-                if(socIn.readLine().equals(".")){
+            while (true) {
+                if (socIn.readLine().equals(".")) {
                     return;
                 }
                 socOut.println("--- Aucun groupe selectionne. Appuyez sur . pour quitter ---");
             }
-        }else{
+        } else {
             MessageServer.getGroupHistory(sender, groupName);
             MessageServer.getGroupNewMessage(sender, groupName);
             while (true) {
                 String line = socIn.readLine();
-                if(!line.equals("\n"))
+                if (!line.equals("\n"))
                     System.out.println("[Multicast] Reçu :  " + line);
                 if (line.equals(".")) {
                     return;
                 }
-                MessageServer.sendMessageToGroup(sender,groupName,line);
+                MessageServer.sendMessageToGroup(sender, groupName, line);
             }
 
         }
@@ -144,29 +145,35 @@ public class ClientThread
 
     public static boolean createGroup(BufferedReader socIn, PrintStream socOut, String sender) throws IOException {
         List<String> newGroup = new ArrayList<>();
-        Hashtable<String,String> listUsers =  MessageServer.getUserList();
+        Hashtable<String, String> listUsers = MessageServer.getUserList();
+        Hashtable<String, List<String>> groups = MessageServer.getGroups();
         boolean active = true;
         //Récupère le nom du groupe
         String groupName = socIn.readLine();
         newGroup.add(groupName);
         newGroup.add(sender);
-        do{
+        newGroup.add("admin");
+        do {
             String tmp = socIn.readLine();
-            if(tmp.equals(".")){
+            if (tmp.equals(".")) {
                 active = false;
-            }else{
-                if(listUsers.containsKey(tmp)) {
-                    newGroup.add(tmp);
-                    socOut.println("* " + tmp + " a bien été ajouté.");
-                }else{
+            } else {
+                if (listUsers.containsKey(tmp)) {
+                    if(newGroup.contains(tmp)){
+                        socOut.println("--- Cet utilisateur est déjà dans le groupe!");
+                    }else {
+                        newGroup.add(tmp);
+                        socOut.println("* " + tmp + " a bien été ajouté.");
+                    }
+                } else {
                     socOut.println("--- Cet utilisateur n'existe pas!");
                 }
             }
-        }while(active);
-        if(newGroup.size() <= 3){ //Si on a que 2 personnes + le nom du groupe...
+        } while (active);
+        if (newGroup.size() <= 4) { //Si on a que 2 personnes + le nom du groupe + admin...
             socOut.println("--- Le groupe ne peut pas contenir moins de 3 personnes -> création annulée");
             return false;
-        }else{
+        } else {
             MessageServer.createGroup(newGroup);
         }
         return true;
@@ -174,10 +181,10 @@ public class ClientThread
 
     public static boolean broadcast(BufferedReader socIn, PrintStream socOut, String sender) throws IOException {
         String msg = socIn.readLine();
-        if(sender.equals("admin")){
+        if (sender.equals("admin")) {
             MessageServer.broadcastMsg(msg);
             socOut.println("--- Message envoye");
-        }else{
+        } else {
             socOut.println("--- Erreur -> vous n'etes pas admin");
             return false;
         }
