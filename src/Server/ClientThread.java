@@ -45,6 +45,7 @@ public class ClientThread
                 sender = socIn.readLine();
                 Hashtable<String, String> usersList = MessageServer.getUserList();
                 if (usersList.containsKey(sender)) {
+                    socOut.println("userFound");
                     socOut.println("--- Veuillez rentrer votre mdp ---");
                     String mdp = socIn.readLine();
                     if (!usersList.get(sender).equals(mdp)) {
@@ -53,6 +54,8 @@ public class ClientThread
                         connected = true;
                         socOut.println("connected");
                     }
+                }else{
+                    socOut.println("notFound");
                 }
             }while(!connected);
             MessageServer.sockets.put(sender,clientSocket);

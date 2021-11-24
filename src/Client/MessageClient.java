@@ -58,13 +58,16 @@ public class MessageClient {
             }
             sender = stdIn.readLine();
             socOut.println(sender);
-            System.out.println(socIn.readLine());
-            socOut.println(stdIn.readLine());
             line = socIn.readLine();
-            if(line.equals("connected"))
-                connected = true;
-            else
-                System.out.println(line);
+            if(line.equals("userFound")) {
+                System.out.println(socIn.readLine());
+                socOut.println(stdIn.readLine());
+                line = socIn.readLine();
+                if (line.equals("connected"))
+                    connected = true;
+                else
+                    System.out.println(line);
+            }
         }while(!connected);
 
         ThreadClientListening tcl = new ThreadClientListening(socIn);
